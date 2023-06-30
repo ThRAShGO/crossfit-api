@@ -1,0 +1,61 @@
+Creación de API REST con node.js
+
+Instalar node.js
+Crear una nueva variable de entorno con la localización de la instalación de node
+creamos el package.json con npm init -y
+
+instalamos dependencia de desarrollo "nodemon" (-D para instalar solo en el desarrollo en local)
+esta dependencia reinicia el servidor cuando realizamos algún cambio automáticamente (como el hot reloading del front)
+npm install -D nodemon 
+
+instalamos express.js (el servidor) en las dependencias normales
+npm install express
+
+En este punto las dependencias aparecerán en el package.json como dependencies y devDependencies
+
+Creamos un script de desarrollo en el package.json en el apartado de "scripts". Lo llamaremos "dev" que lanzará el entorno de desarrollo con nodemon
+"dev": "nodemon ./src/index.js",
+
+para lanzarlo haremos un npm run dev
+
+crearemos también el script para producción que lo llamaremos "start". En este caso, en vez de lanzarlo con nodemon lo lanzaremos con node normal
+"start": "node ./src/index.js",
+
+Ahora vamos a crear el servidor en el archivo index.js
+const express = require('express'); //requerimos la librería que vamos a usar (se pueden usar módulos pero no se cómo todavía)
+
+const app = express();
+const PORT = process.env.PORT || 3000; //configuramos el puerto desde las variables de entorno, y si no lo encuentra, le ponemos el 3000 por defecto
+
+app.get('/', (req, res) => {
+    res.send("Server Rulando"); //estp es lo que le vamos a enviar a la app
+});
+
+app.listen(PORT, () => {
+    console.log(`Server listening on port ${PORT}`); //esto es lo que hace que se escuche el puerto, le ponemos un mensajito con el console.log para que sepamos que está funcionando y cuál es el puerto que escucha
+});
+
+VERSIONADO
+Si ya tenemos la app funcionando, lo propio es que creemos versiones de la api para que si cambiamos alguna cosa la app no deje de funcionar. Para ello vamos a crear versiones de la api y daremos soporte un tiempo a la versión anterior para que de lugar a cambiar las cosas en el front.
+Vamos a crear la versión 1 de la api creando la carpeta v1 en src.
+
+Moveremos la carpeta rutas a la carpeta v1 y creamos un index.js donde empezaremos a meter las rutas
+instanciamos el router que nos viene dentro de la librería express para poder modularizar las rutas
+dentro de este archivo crearemos un envío con algo que nos indique donde estamos.
+Al final del archivo lo convertimos en un módulo para poder exportarlo.
+
+Volvemos al index inicial y exportamos el módulo que acabamos de crear
+const v1Router = require("./v1/routes/index.js");
+
+ahora indicamos que vamos a usar el módulo que hemos importado
+app.use("/api/v1", v1Router); 
+
+indicamos que usamos la url del módulo que acabamos de crear y le concatenamos delante el resto de cosas que queremos meter en la url, en este caso la versión de la api
+
+**BUENAS PRÁCTICAS**
+Usar siempre nombres en plural para nuestros endpoints
+
+ahora vamos a crear nuestro primer objeto en rutas
+dentro crearemos el crud y exportaremos el módulo.
+
+https://youtu.be/qFmwRriNJWs?t=1872
